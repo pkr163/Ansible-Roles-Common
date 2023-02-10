@@ -1,0 +1,35 @@
+---
+- name: Set root password
+  become: yes
+  user:
+    name: root
+    password: "$6$SALT_GOES_HERE$HASH_GOES_HERE"
+
+- name: Disable root login
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    validate: 'systemctl restart ssh'
+
+- name: Create a new user
+  become: yes
+  user:
+    name: ansible
+    password: "$6$SALT_GOES_HERE$HASH_GOES_HERE"
+    groups: sudo
+    append: yes
+
+- name: Configure firewall
+  become: yes
+  firewalld:
+    service: ssh
+    permanent: yes
+    state: enabled
+
+- name: Configure SELinux
+  become: yes
+  selinux:
+    state: enforcing
