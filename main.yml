@@ -1,0 +1,22 @@
+---
+- name: Update packages
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Setup firewall
+  become: yes
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+
+- name: Install common packages
+  become: yes
+  apt:
+    name:
+      - wget
+      - nano
+      - htop
+    state: present
