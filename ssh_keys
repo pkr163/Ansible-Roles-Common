@@ -1,0 +1,14 @@
+- name: Copy ssh keys to remote host
+  copy:
+    src: ssh_keys/
+    dest: /home/{{ ansible_user }}/.ssh/
+    mode: 0700
+    owner: {{ ansible_user }}
+    group: {{ ansible_user }}
+
+- name: Add ssh key to authorized_keys
+  authorized_key:
+    user: {{ ansible_user }}
+    key: "{{ item }}"
+  with_fileglob:
+    - ssh_keys/*.pub
